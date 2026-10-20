@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>AskPupkin - Question Details</title>
+    <link rel="stylesheet" href="static/css/style.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <a href="index.html" class="navbar-name">AskPupkin</a>
+      <form action="/search" method="GET" class="navbar-search">
+        <input type="search" placeholder="Search" required />
+        <button type="submit" class="submit">ASK!</button>
+      </form>
+      <div class="navbar-auth-links">
+        <a href="#">log in</a>
+        <a href="#">register</a>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="questions-section">
+        <article class="question">
+          <div class="question-left">
+            <img class="question-img" alt="avatar" src="" />
+            <div class="counter-box">
+              <button class="vote-btn">▲</button>
+              <span class="counter">5</span>
+              <button class="vote-btn">▼</button>
+            </div>
+          </div>
+          <div class="question-right">
+            <h1 class="question-header">How to build a moon park ?</h1>
+            <p class="question-text full-text">
+              Lorem ipsum — dolor sit amet, consectetuer adipiscing elit, sed
+              diam nonummy nibh euismod tincidunt ut laoreet dolore magna
+              aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud
+              exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea
+              commodo consequat.
+            </p>
+            <div class="question-meta">
+              <div class="tags-block">
+                <span>Tags:</span>
+                <a href="#" class="tag">black-jack</a>
+                <a href="#" class="tag">bender</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="question">
+          <div class="question-left">
+            <img class="question-img" alt="avatar" src="" />
+            <div class="counter-box">
+              <button class="vote-btn">▲</button>
+              <span class="counter">5</span>
+              <button class="vote-btn">▼</button>
+            </div>
+          </div>
+          <div class="question-right">
+            <p class="question-text">
+              First of all I would like to thank you for the invitation to
+              participate in such a ... Russia is the huge territory which in
+              many respects needs to be render habitable.
+            </p>
+          </div>
+        </article>
+
+        <article class="question">
+          <div class="question-left">
+            <img class="question-img" alt="avatar" src="" />
+            <div class="counter-box">
+              <button class="vote-btn">▲</button>
+              <span class="counter">3</span>
+              <button class="vote-btn">▼</button>
+            </div>
+          </div>
+          <div class="question-right">
+            <p class="question-text">
+              rem Ipsum is simply dummy text of the printing and typesetting
+              industry. Lorem Ipsum has been the industry's standard dummy text
+              ever since 1966, when designers at Letraset and James Mosley, the
+              librarian at St Bride Printing Library in London, took a 1914
+              Cicero translation and scrambled it to make dummy text for
+              Letraset's Body Type sheets. It has survived not only many
+              decades, but also the leap into electronic typesetting, remaining
+              essentially unchanged. It was popularised thanks to these sheets
+              and more recently with desktop publishing software like Aldus
+              PageMaker and Microsoft Word including versions of Lorem Ipsum.
+              Why do we use it? It is a long established fact that a reader will
+              be distracted by the readable content of a page when looking at
+              its layout. The point of using Lorem Ipsum is that it has a
+              more-or-less normal distribution of letters, as opposed to using
+              'Content here, content here', making it look like readable
+              English. Many desktop publishing packages and web page editors now
+              use Lorem Ipsum as their default model text, and a search for
+              'lorem ipsum' will uncover many web sites still in their infancy.
+              Various versions have evolved over the years, sometimes by
+              accident, sometimes on purpose (injected humour and the like).
+              Where does it come from? Contrary to popular belief, Lorem Ipsum
+              is not simply random text. It has roots in a piece of classical
+              Latin literature from 45 BC, making it over 2000 years old.
+              Richard McClintock, a Latin professor at Hampden-Sydney College in
+              Virginia, looked up one of the more obscure Latin words,
+              consectetur, from a Lorem Ipsum passage, and going through the
+              cites of the word in classical literature, discovered the
+              undoubtable source. Lorem Ipsum comes from sections 1.10.32 and
+              1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good
+              and Evil) by Cicero, written in 45 BC. This book is a treatise on
+              the theory of ethics, very popular during the Renaissance. The
+              first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes
+              from a line in section 1.10.32. The standard chunk of Lorem Ipsum
+              used since 1966 is reproduced below for those interested. Sections
+              1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero
+              are also reproduced in their exact original form, accompanied by
+              English versions from the 1914 translation by H. Rackham.
+            </p>
+          </div>
+        </article>
+
+        <form
+          action="/question/1232343/answer"
+          method="POST"
+          class="answer-form"
+        >
+          <div class="form-group-full">
+            <textarea
+              id="answer-text"
+              name="answer"
+              placeholder="Enter your answer here.."
+              required
+            ></textarea>
+          </div>
+          <button type="submit" class="submit-btn">Answer</button>
+        </form>
+      </section>
+
+      <aside class="sidebar">
+        <div class="sidebar-block">
+          <h2>Popular Tags</h2>
+          <div class="tags-cloud"></div>
+        </div>
+      </aside>
+    </main>
+  </body>
+</html>
