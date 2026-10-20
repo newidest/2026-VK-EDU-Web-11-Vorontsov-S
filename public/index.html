@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>AskPupkin</title>
+    <link rel="stylesheet" href="static/css/style.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <a href="#" class="navbar-name">AskPupkin</a>
+      <form action="/search" method="GET" class="navbar-search">
+        <input type="search" placeholder="Search" required />
+        <button type="submit" class="submit">ASK!</button>
+      </form>
+      <div class="navbar-userBlock">
+        <img alt="Avatar" id="navbar-avatar" src="" />
+        <div class="navbar-userinfo">
+          <div id="navbar-username">Dr. Pepper</div>
+          <a href="settings.html" id="settings">settings</a>
+          <a href="#" id="logout">log out</a>
+          <a href="ask.html" id="ask-button">ask</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="questions-section">
+        <div class="content-header">
+          <h1 id="page-title">New Questions</h1>
+          <a href="#" id="hot-questions">Hot Questions</a>
+        </div>
+
+        <article class="question">
+          <div class="question-left">
+            <img class="question-img" alt="avatar" src="" />
+            <div class="counter-box">
+              <button class="vote-btn">+1</button>
+              <span class="counter">0</span>
+              <button class="vote-btn">-1</button>
+            </div>
+          </div>
+          <div class="question-right">
+            <a href="question.html" class="question-header">How to build a moon park ?</a>
+            <p class="question-text">
+              Guys, i have trouble with a moon park. Can't find th black-jack...
+            </p>
+            <div class="question-meta">
+              <a href="#" class="answer-link">answer (3)</a>
+              <div class="tags-block">
+                <span>Tags:</span>
+                <a href="#" class="tag">black-jack</a>
+                <a href="#" class="tag">bender</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="question">
+          <div class="question-left">
+            <img class="question-img" alt="avatar" src="" />
+            <div class="counter-box">
+              <button class="vote-btn">+1</button>
+              <span class="counter">0</span>
+              <button class="vote-btn">-1</button>
+            </div>
+          </div>
+          <div class="question-right">
+            <a href="question.html" class="question-header">How to build a moon park ?</a>
+            <p class="question-text">
+              Guys, i have trouble with a moon park. Can't find th black-jack...
+            </p>
+            <div class="question-meta">
+              <a href="#" class="answer-link">answer (3)</a>
+              <div class="tags-block">
+                <span>Tags:</span>
+                <a href="#" class="tag">black-jack</a>
+                <a href="#" class="tag">bender</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="question">
+          <div class="question-left">
+            <img class="question-img" alt="avatar" src="" />
+            <div class="counter-box">
+              <button class="vote-btn">+1</button>
+              <span class="counter">0</span>
+              <button class="vote-btn">-1</button>
+            </div>
+          </div>
+          <div class="question-right">
+            <a href="question.html" class="question-header">How to build a moon park ?</a>
+            <p class="question-text">
+              It is a long established fact that a reader will be distracted by
+              the readable content of a page when looking at its layout. The
+              point of using Lorem Ipsum is that it has a more-or-less normal
+              distribution of letters, as opposed to using 'Content here,
+              content here', making it look like readable English. Many desktop
+              publishing packages and web page editors now use Lorem Ipsum as
+              their default model text, and a search for 'lorem ipsum' will
+              uncover many web sites still in their infancy. Various versions
+              have evolved over the years, sometimes by accident, sometimes on
+              purpose (injected humour and the like).
+            </p>
+            <div class="question-meta">
+              <a href="#" class="answer-link">answer (3)</a>
+              <div class="tags-block">
+                <span>Tags:</span>
+                <a href="#" class="tag">black-jack</a>
+                <a href="#" class="tag">bender</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <div class="pagination">
+          <a href="#" class="page-num">1</a>
+          <a href="#" class="page-num">2</a>
+          <a href="#" class="page-num">3</a>
+          <span class="page-dots">...</span>
+          <a href="#" class="page-num">53</a>
+        </div>
+      </section>
+
+      <aside class="sidebar">
+        <div class="sidebar-block">
+          <h2>Popular Tags</h2>
+          <div class="tags-cloud">
+            <a href="#">perl</a>
+            <a href="tag.html">python</a>
+            <a href="#">TechnoPark</a>
+            <a href="#">MySQL</a>
+            <a href="#">django</a>
+            <a href="#">Mail.Ru</a>
+            <a href="#">Voloshin</a>
+            <a href="#">Firefox</a>
+          </div>
+        </div>
+
+        <div class="sidebar-block">
+          <h2>Best Members</h2>
+          <ul class="members-list">
+            <li><a href="#">Mr. Freeman</a></li>
+            <li><a href="#">Dr. House</a></li>
+            <li><a href="#">Bender</a></li>
+            <li><a href="#">Queen Victoria</a></li>
+            <li><a href="#">V. Pupkin</a></li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+    <footer class="footer">
+      <div class="footer-content">
+        <span>AskPupkin</span>
+        <div class="footer-links">
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

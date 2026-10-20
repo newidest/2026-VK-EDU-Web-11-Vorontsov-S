@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>AskPupkin</title>
+    <link rel="stylesheet" href="static/css/style.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <a href="index.html" class="navbar-name">AskPupkin</a>
+      <form action="/search" method="GET" class="navbar-search">
+        <input type="search" placeholder="Search" required />
+        <button type="submit" class="submit">ASK!</button>
+      </form>
+      <div class="navbar-userBlock">
+        <img alt="Avatar" id="navbar-avatar" src="" />
+        <div class="navbar-userinfo">
+          <div id="navbar-username">Dr. Pepper</div>
+          <a href="#" id="settings">settings</a>
+          <a href="#" id="logout">log out</a>
+          <a href="ask.html" id="ask-button">ask</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="settings">
+        <div class="content-header" id="settings-username">
+          Settings: Dr.Pepper
+        </div>
+        <div class="setting-block" id="settings-login-name">
+          <div class="setting-name">Login:</div>
+          <div class="settings-value">dr_pepper</div>
+        </div>
+        <form action="" method="post" class="settings-changable">
+          <div class="setting-block">
+            <label for="name">Enter your name: </label>
+            <input type="text" name="name" id="name" required class="settings-form">
+          </div>
+          <div class="setting-block">
+            <label>Email:</label>
+            <input type="email" name="email" id="email" required class="settings-form">
+          </div>
+          <div class="setting-block" id="settings-avatar-block">
+            <label>Upload avatar</label>
+            <input type="file" name="image" id="avatar-upload" class="settings-form" >
+          </div>
+          <div class="setting-block" >
+            <input type="submit" value="Save" id="settings-submit" >
+          </div>
+        </form>
+      </div>
+
+      <aside class="sidebar">
+        <div class="sidebar-block">
+          <h2>Popular Tags</h2>
+          <div class="tags-cloud">
+            <a href="#">perl</a>
+            <a href="tag.html">python</a>
+            <a href="#">TechnoPark</a>
+            <a href="#">MySQL</a>
+            <a href="#">django</a>
+            <a href="#">Mail.Ru</a>
+            <a href="#">Voloshin</a>
+            <a href="#">Firefox</a>
+          </div>
+        </div>
+
+        <div class="sidebar-block">
+          <h2>Best Members</h2>
+          <ul class="members-list">
+            <li><a href="#">Mr. Freeman</a></li>
+            <li><a href="#">Dr. House</a></li>
+            <li><a href="#">Bender</a></li>
+            <li><a href="#">Queen Victoria</a></li>
+            <li><a href="#">V. Pupkin</a></li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+    <footer class="footer">
+      <div class="footer-content">
+        <span>AskPupkin</span>
+        <div class="footer-links">
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

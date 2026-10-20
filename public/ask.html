@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>AskPupkin - New Question</title>
+    <link rel="stylesheet" href="static/css/style.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <a href="index.html" class="navbar-name">AskPupkin</a>
+      <form action="/search" method="GET" class="navbar-search">
+        <input type="search" placeholder="Search" required />
+        <button type="submit" class="submit">ASK!</button>
+      </form>
+      <div class="navbar-auth-links">
+        <a href="#">log in</a>
+        <a href="#">register</a>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="form-section">
+        <h1 id="page-title">New Question</h1>
+
+        <form action="/ask" method="POST" class="ask-form">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              placeholder="Enter title"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="text">Text</label>
+            <textarea id="text" name="text" required> </textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="tags">Tags</label>
+            <input type="text" id="tags" name="tags" placeholder="Enter tags" />
+          </div>
+
+          <button type="submit" class="submit-btn">ASK!</button>
+        </form>
+      </section>
+
+      <aside class="sidebar">
+        <div class="sidebar-block">
+          <h2>Popular Tags</h2>
+          <div class="tags-cloud">
+            <a href="#">perl</a>
+            <a href="tag.html">python</a>
+            <a href="#">TechnoPark</a>
+            <a href="#">MySQL</a>
+            <a href="#">django</a>
+            <a href="#">Mail.Ru</a>
+            <a href="#">Voloshin</a>
+            <a href="#">Firefox</a>
+          </div>
+        </div>
+
+        <div class="sidebar-block">
+          <h2>Best Members</h2>
+          <ul class="members-list">
+            <li><a href="#">Mr. Freeman</a></li>
+            <li><a href="#">Dr. House</a></li>
+            <li><a href="#">Bender</a></li>
+            <li><a href="#">Queen Victoria</a></li>
+            <li><a href="#">V. Pupkin</a></li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+    <footer class="footer">
+      <div class="footer-content">
+        <span>AskPupkin</span>
+        <div class="footer-links">
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
