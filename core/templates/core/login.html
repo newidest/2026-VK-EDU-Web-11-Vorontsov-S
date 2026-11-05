@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}AskPupkin - Log in{% endblock %}
+
+{% block content %}
+<div class="form-section">
+    <div class="content-header">
+        <span id="page-title">Log in</span>
+    </div>
+    <form action="{% url 'login' %}" method="POST" class="ask-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">Login</label>
+            <input type="text" id="username" name="username" class="settings-form" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" class="settings-form" required>
+        </div>
+        <button type="submit" class="submit-btn">Log in!</button>
+    </form>
+</div>
+{% endblock %}

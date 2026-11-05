@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}AskPupkin{% endblock %}
+
+{% block content %}
+<section class="questions-section">
+  <div class="content-header">
+    <h1 id="page-title">New Questions</h1>
+    <a href="{% url 'hot' %}" id="hot-questions">Hot Questions</a>
+  </div>
+
+  {% for question in page_obj %}
+    {% include 'includes/question_item.html' %}
+  {% endfor %}
+
+  {% include 'includes/pagination.html' %}
+</section>
+{% endblock %}

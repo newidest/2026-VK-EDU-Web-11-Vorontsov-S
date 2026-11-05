@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}AskPupkin - Tag: {{ tag_name }}{% endblock %}
+
+{% block content %}
+<section class="questions-section">
+  <div class="content-header">
+    <h1 id="tag-name">Tag: {{ tag_name }}</h1>
+  </div>
+
+  {% for question in page_obj %}
+    {% include 'includes/question_item.html' %}
+  {% endfor %}
+
+  {% include 'includes/pagination.html' %}
+</section>
+{% endblock %}

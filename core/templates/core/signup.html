@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}AskPupkin - Sign up{% endblock %}
+
+{% block content %}
+<div class="form-section">
+    <div class="content-header">
+        <span id="page-title">Registration</span>
+    </div>
+    <form action="{% url 'signup' %}" method="POST" class="ask-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="login">Login</label>
+            <input type="text" id="login" name="username" class="settings-form" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" class="settings-form" required>
+        </div>
+        <div class="form-group">
+            <label for="nick">NickName</label>
+            <input type="text" id="nick" name="nick" class="settings-form" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" class="settings-form" required>
+        </div>
+        <div class="form-group">
+            <label for="repeat">Repeat</label>
+            <input type="password" id="repeat" name="password_confirm" class="settings-form" required>
+        </div>
+        <div class="form-group">
+            <label for="avatar-upload">Avatar</label>
+            <input type="file" id="avatar-upload" name="avatar" class="settings-form">
+        </div>
+        <button type="submit" class="submit-btn">Register!</button>
+    </form>
+</div>
+{% endblock %}

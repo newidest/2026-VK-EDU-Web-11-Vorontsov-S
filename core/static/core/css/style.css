@@ -61,6 +61,7 @@ a:hover {
   border-bottom: 3px solid #fc9803;
   background-color: black;
   padding: 0 100px;
+  padding-bottom: 20px;
 }
 
 .navbar-name {
@@ -519,4 +520,11 @@ input[type="file"].settings-form::file-selector-button {
 input[type="file"].settings-form::file-selector-button:hover {
     background-color: #fc9803;
     color: #1c1a17;
+}
+
+
+.question-text.full-text {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
 }

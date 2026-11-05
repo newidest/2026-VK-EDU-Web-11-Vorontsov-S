@@ -1,0 +1,25 @@
+{% load static %}
+<article class="question">
+  <div class="question-left">
+    <img class="question-img" alt="avatar" src="{% static 'core/img/avatar.png' %}" />
+    <div class="counter-box">
+      <button class="vote-btn">+1</button>
+      <span class="counter">{{ question.rating }}</span>
+      <button class="vote-btn">-1</button>
+    </div>
+  </div>
+  <div class="question-right">
+    <a href="{% url 'question' question.id %}" class="question-header">{{ question.title }}</a>
+    <p class="question-text">
+      {{ question.text }}
+    </p>
+    <div class="question-meta">
+      <div class="tags-block">
+        <span>Tags:</span>
+        {% for tag in question.tags %}
+          <a href="{% url 'tag' tag %}" class="tag">{{ tag }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</article>

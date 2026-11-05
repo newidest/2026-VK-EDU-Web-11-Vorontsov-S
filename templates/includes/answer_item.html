@@ -1,0 +1,16 @@
+{% load static %}
+<article class="question">
+  <div class="question-left">
+    <img class="question-img" alt="avatar" src="{% static 'core/img/avatar.png' %}" />
+    <div class="counter-box">
+      <button class="vote-btn">▲</button>
+      <span class="counter">{{ answer.rating }}</span>
+      <button class="vote-btn">▼</button>
+    </div>
+  </div>
+  <div class="question-right">
+    <p class="question-text full-text">
+      {{ answer.text }}
+    </p>
+  </div>
+</article>

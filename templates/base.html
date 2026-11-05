@@ -1,0 +1,81 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block title %}AskPupkin{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+  </head>
+  <body>
+    <header class="navbar">
+      <a href="{% url 'index' %}" class="navbar-name">AskPupkin</a>
+      <form action="" method="GET" class="navbar-search">
+        <input type="search" placeholder="Search" required />
+        <button type="submit" class="submit">ASK!</button>
+      </form>
+      {% if user.is_authenticated %}
+      <div class="navbar-userBlock">
+        <img
+          alt="Avatar"
+          id="navbar-avatar"
+          src="{% static 'core/img/avatar.png' %}"
+        />
+        <div class="navbar-userinfo">
+          <div id="navbar-username">
+            {{ user.username|default:"Dr. Pepper" }}
+          </div>
+          <a href="{% url 'profile' %}" id="settings">settings</a>
+          <a href="{% url 'login' %}" id="logout">log out</a>
+          <a href="{% url 'ask' %}" id="ask-button">ask</a>
+        </div>
+      </div>
+      {% else %}
+      <div class="navbar-auth-links">
+        <a href="{% url 'login' %}">log in</a>
+        <a href="{% url 'signup' %}">register</a>
+      </div>
+      {% endif %}
+    </header>
+
+    <main class="content">
+      {% block content %} {% endblock %}
+
+      <aside class="sidebar">
+        <div class="sidebar-block">
+          <h2>Popular Tags</h2>
+          <div class="tags-cloud">
+            <a href="{% url 'tag' 'perl' %}">perl</a>
+            <a href="{% url 'tag' 'python' %}">python</a>
+            <a href="{% url 'tag' 'TechnoPark' %}">TechnoPark</a>
+            <a href="{% url 'tag' 'MySQL' %}">MySQL</a>
+            <a href="{% url 'tag' 'django' %}">django</a>
+            <a href="{% url 'tag' 'Mail.Ru' %}">Mail.Ru</a>
+            <a href="{% url 'tag' 'Voloshin' %}">Voloshin</a>
+            <a href="{% url 'tag' 'Firefox' %}">Firefox</a>
+          </div>
+        </div>
+
+        <div class="sidebar-block">
+          <h2>Best Members</h2>
+          <ul class="members-list">
+            <li><a href="#">Mr. Freeman</a></li>
+            <li><a href="#">Dr. House</a></li>
+            <li><a href="#">Bender</a></li>
+            <li><a href="#">Queen Victoria</a></li>
+            <li><a href="#">V. Pupkin</a></li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <span>AskPupkin</span>
+        <div class="footer-links">
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
