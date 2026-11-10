@@ -1,0 +1,21 @@
+{% load static %}
+<article class="question">
+  <div class="question-left">
+    <img
+      class="question-img"
+      alt="avatar"
+      src="{% static 'core/img/avatar.png' %}"
+    />
+    <div class="counter-box">
+      <button type="button" class="vote-btn {% if answer.vote_state == 'like' %}active-btn{% endif %}">▲</button>
+      <span class="counter">{{ answer.rating }}</span>
+      <button type="button" class="vote-btn {% if answer.vote_state == 'dislike' %}active-btn{% endif %}">▼</button>
+    </div>
+  </div>
+  <div class="question-right">
+    <p class="question-text full-text">{{ answer.text }}</p>
+    <div class="question-meta">
+      <div class="time">Date: {{answer.time}}</div>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}AskPupkin - Settings{% endblock %}
+
+{% block content %}
+<div class="form-section">
+    <div class="content-header">
+        <span id="page-title">Settings: {{ user.username }}</span>
+    </div>
+
+    <div class="form-error">Error: Could not save profile settings!</div>
+
+    <form action="{% url 'profile' %}" method="POST" class="ask-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="login">Login</label>
+            <div>
+                <input type="text" id="login" name="username" value="{{ user.username }}" minlength="4" maxlength="32" required class="settings-form">
+                <small class="field-hint">4–32 characters</small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <div>
+                <input type="email" id="email" name="email" value="{{ user.email }}" maxlength="64" required class="settings-form">
+                <small class="field-error">This email is already taken!</small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="nick">NickName</label>
+            <div>
+                <input type="text" id="nick" name="nick" value="{{ user.username }}" minlength="2" maxlength="32" required class="settings-form">
+                <small class="field-hint">2–32 characters</small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="avatar-upload">Avatar</label>
+            <div>
+                <input type="file" id="avatar-upload" name="avatar" class="settings-form">
+                <small class="field-hint">JPG or PNG, max 2 MB</small>
+            </div>
+        </div>
+        <button type="submit" class="submit-btn">Save</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% load static %}
+<article class="question">
+  <div class="question-left">
+    <img class="question-img" alt="avatar" src="{% static 'core/img/avatar.png' %}" />
+    <div class="counter-box">
+      <button type="button" class="vote-btn {% if question.vote_state == 'like' %}active-btn{% endif %}">▲</button>
+      <span class="counter">{{ question.rating }}</span>
+      <button type="button" class="vote-btn {% if question.vote_state == 'dislike' %}active-btn{% endif %}">▼</button>
+    </div>
+  </div>
+  <div class="question-right">
+    <a href="{% url 'question' question.id %}" class="question-header">{{ question.title }}</a>
+    <p class="question-text">
+      {{ question.text }}
+    </p>
+    <div class="question-meta">
+      <div class="tags-block">
+        <span>Tags:</span>
+        {% for tag in question.tags %}
+          <a href="{% url 'tag' tag %}" class="tag">{{ tag }}</a>
+        {% endfor %}
+      </div>
+      <div class="time">Date: {{question.time}}</div>
+      <a href="{% url 'question' question.id %}">Answers: {{question.answer_count}}</a>
+    </div>
+  </div>
+</article>
