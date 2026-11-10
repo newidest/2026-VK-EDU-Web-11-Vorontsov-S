@@ -3,15 +3,17 @@
 <html lang="ru">
   <head>
     <meta charset="utf-8" />
-    <title>{% block title %}AskPupkin{% endblock %}</title>
+    <title>{% block title %}AskPumpkin{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'core/img/favico.ico' %}" type="image/x-icon">
   </head>
   <body>
     <header class="navbar">
-      <a href="{% url 'index' %}" class="navbar-name">AskPupkin</a>
+      <a href="{% url 'index' %}" class="navbar-name">AskPumpkin</a>
       <form action="" method="GET" class="navbar-search">
-        <input type="search" placeholder="Search" required />
-        <button type="submit" class="submit">ASK!</button>
+        <input type="search" placeholder="Type something" required />
+        <button type="submit" class="submit">Search</button>
       </form>
       {% if user.is_authenticated %}
       <div class="navbar-userBlock">

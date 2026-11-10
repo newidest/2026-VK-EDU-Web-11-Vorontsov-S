@@ -10,8 +10,12 @@
 
   {% for question in page_obj %}
     {% include 'includes/question_item.html' %}
+  {% empty %}
+    <h1>Вопросов с таким тегом пока нет</h1>
   {% endfor %}
 
-  {% include 'includes/pagination.html' %}
+  {% if page_obj.paginator.num_pages > 1 %}
+    {% include 'includes/pagination.html' %}
+  {% endif %}
 </section>
 {% endblock %}

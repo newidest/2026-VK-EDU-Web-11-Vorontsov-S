@@ -8,11 +8,11 @@
 
   <article class="question">
     <div class="question-left">
-      <img class="question-img" alt="avatar" src="{% static 'img/avatar.png' %}" />
+      <img class="question-img" alt="avatar" src="{% static 'core/img/avatar.png' %}" />
       <div class="counter-box">
-        <button class="vote-btn">▲</button>
-        <span class="counter">{{ question.rating }}</span>
-        <button class="vote-btn">▼</button>
+        <button type="button" class="vote-btn {% if question.vote_state == 'like' %}active-btn{% endif %}">▲</button>
+      <span class="counter">{{ question.rating }}</span>
+      <button type="button" class="vote-btn {% if question.vote_state == 'dislike' %}active-btn{% endif %}">▼</button>
       </div>
     </div>
     <div class="question-right">
