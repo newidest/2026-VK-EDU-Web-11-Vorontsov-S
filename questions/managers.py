@@ -12,7 +12,6 @@ class QuestionManager(models.Manager):
             .filter(is_active=True)
             .select_related('user', 'user__user')
             .prefetch_related('tags')
-            .annotate(answers_count=Count('answers'))
         )
 
     def new(self):
@@ -25,7 +24,7 @@ class QuestionManager(models.Manager):
         return self.get_queryset().filter(tags__name=tag_name).order_by('-created')
 
     def with_details(self):
-        return self.get_queryset()
+        return self.get_queryset().annotate(answer_count=Count('answers'))
 
 
 class AnswerManager(models.Manager):
