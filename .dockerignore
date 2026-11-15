@@ -4,4 +4,5 @@ __pycache__/
 *.pyc
 .git/
 db.sqlite3
-.env
+.env.local
+.env.docker
