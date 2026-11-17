@@ -11,6 +11,8 @@
 
   {% for question in page_obj %}
     {% include 'includes/question_item.html' %}
+    {% empty %}
+      <h1>Пока нет ни одного вопроса</h1>
   {% endfor %}
 
   {% include 'includes/pagination.html' %}

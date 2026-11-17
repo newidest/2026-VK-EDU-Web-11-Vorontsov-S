@@ -13,9 +13,9 @@
     </div>
   </div>
   <div class="question-right">
-    <p class="question-text full-text">{{ answer.text }}</p>
+    <p class="question-text full-text">{{ answer.content }}</p>
     <div class="question-meta">
-      <div class="time">Date: {{answer.time}}</div>
+      <div class="time">Date: {{answer.created|date:"d.m.y H:i"}}</div>
     </div>
   </div>
 </article>

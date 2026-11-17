@@ -4,9 +4,13 @@
   <head>
     <meta charset="utf-8" />
     <title>{% block title %}AskPumpkin{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="{% static 'core/img/favico.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      href="{% static 'core/img/favico.ico' %}"
+      type="image/x-icon"
+    />
   </head>
   <body>
     <header class="navbar">
@@ -46,14 +50,9 @@
         <div class="sidebar-block">
           <h2>Popular Tags</h2>
           <div class="tags-cloud">
-            <a href="{% url 'tag' 'perl' %}">perl</a>
-            <a href="{% url 'tag' 'python' %}">python</a>
-            <a href="{% url 'tag' 'TechnoPark' %}">TechnoPark</a>
-            <a href="{% url 'tag' 'MySQL' %}">MySQL</a>
-            <a href="{% url 'tag' 'django' %}">django</a>
-            <a href="{% url 'tag' 'Mail.Ru' %}">Mail.Ru</a>
-            <a href="{% url 'tag' 'Voloshin' %}">Voloshin</a>
-            <a href="{% url 'tag' 'Firefox' %}">Firefox</a>
+            {% for tag in popular_tags %}
+            <a href="{% url 'tag' tag.name %}" class="tag">{{ tag }}</a>
+            {% endfor %}
           </div>
         </div>
 

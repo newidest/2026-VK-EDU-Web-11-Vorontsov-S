@@ -1,64 +1,80 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.http import Http404
+from django.db.models import Count
 
-QUESTIONS=[
-    {
-        'id':i,
-        'title':f'How to build a moon park #{i}',
-        'text': f'Lorem ipsum dolor sit amet, consectetuer adipiscing elit asfadfadsfjhaewfheiufhyiasdhfehiufhaseuifhilseuahflskaehufli7esufhakdjshflieuafsfhliuesaf. Question text number {i}.',
-        'answer_count':i*2,
-        'rating':i*3,
-        'tags':['black-jack', 'bender', 'python'],
-        'time':f'{(i+1)%30}.11.26 10:10',
-        'vote_state': 'like' if i % 3 == 1 else ('dislike' if i % 3 == 2 else None),
+from .models import Question, Answer, Tag
+from core.models import Profile
+
+
+def get_base_context():
+    return {
+        'popular_tags': Tag.objects.annotate(num_questions=Count('questions')).order_by('-num_questions')[:10],
+        'best_members': Profile.objects.select_related('user').order_by('-id')[:5],
     }
-    for i in range(0,30)
-]
 
-ANSWERS = [
-    {
-        'id': i,
-        'text': f'First of all I would like to thank you for the invitation ({i}). Russia is a huge territory.',
-        'rating': 5 if i == 1 else 2,
-        'time':f'{i%30}.11.26 10:10',
-        'vote_state': 'like' if i % 3 == 1 else ('dislike' if i % 3 == 2 else None),
-    }
-    for i in range(1, 15)
-]
 
-def paginate(objects_list,request,per_page=10):
-    paginator=Paginator(objects_list,per_page)
-    page_number=request.GET.get('page',1)
+def paginate(objects_list, request, per_page=10):
+    paginator = Paginator(objects_list, per_page)
+    page_number = request.GET.get('page', 1)
     try:
-        page=paginator.page(page_number)
+        page = paginator.page(page_number)
     except PageNotAnInteger:
         page = paginator.page(1)
     except EmptyPage:
-        page = paginator.page(paginator.num_pages)
+        page = paginator.page(paginator.num_pages or 1)
+
+    if page.object_list and hasattr(page.object_list[0], 'title'):
+        ids = [q.id for q in page.object_list]
+        counts = dict(
+            Question.objects.filter(id__in=ids)
+            .annotate(cnt=Count('answers'))
+            .values_list('id', 'cnt')
+        )
+        for q in page.object_list:
+            q.answer_count = counts.get(q.id, 0)
+
     return page
 
+
+def render_page(request, template_name, queryset=None, per_page=10, extra_context=None):
+    context = get_base_context()
+    if queryset is not None:
+        context['page_obj'] = paginate(queryset, request, per_page=per_page)
+    if extra_context:
+        context.update(extra_context)
+    return render(request, template_name, context)
+
+
 def index(request):
-    page=paginate(QUESTIONS,request,per_page=4)
-    return render(request,'questions/index.html',{'page_obj':page})
+    return render_page(request, 'questions/index.html', Question.objects.new(), per_page=4)
+
 
 def hot(request):
-    hot_questions = sorted(QUESTIONS, key=lambda q: q['rating'], reverse=True)
-    page = paginate(hot_questions, request, per_page=5)
-    return render(request, 'questions/hot.html', {'page_obj': page})
+    return render_page(request, 'questions/hot.html', Question.objects.hot(), per_page=5)
+
 
 def tag(request, tag_name):
-    tagged_questions = [q for q in QUESTIONS if tag_name in q['tags']]
-    page = paginate(tagged_questions, request, per_page=5)
-    return render(request, 'questions/tag.html', {'page_obj': page, 'tag_name': tag_name})
+    tag_obj = get_object_or_404(Tag, name=tag_name)
+    return render_page(
+        request,
+        'questions/tag.html',
+        Question.objects.by_tag(tag_obj.name),
+        per_page=4,
+        extra_context={'tag_name': tag_obj.name},
+    )
+
 
 def question(request, question_id):
-    item = next((q for q in QUESTIONS if q['id'] == question_id),None)
-    if item is None:
-        raise Http404("Вопрос не найден")
-    page = paginate(ANSWERS, request, per_page=5)
-    return render(request, 'questions/question.html', {'question': item, 'page_obj': page})
+    item = get_object_or_404(Question.objects.with_details(), pk=question_id)
+    item.answer_count = item.answers.count()
+    return render_page(
+        request,
+        'questions/question.html',
+        Answer.objects.for_question(item),
+        per_page=5,
+        extra_context={'question': item},
+    )
+
 
 def ask(request):
-    return render(request, 'questions/ask.html')
-
+    return render_page(request, 'questions/ask.html')
