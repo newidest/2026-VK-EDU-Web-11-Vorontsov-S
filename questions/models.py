@@ -29,7 +29,6 @@ class BasePost(models.Model):
 class Question(BasePost):
     title = models.CharField(max_length=128, verbose_name='Заголовок')
     tags = models.ManyToManyField(Tag, blank=True, related_name='questions', verbose_name='Теги')
-
     objects = QuestionManager()
 
     def __str__(self):
@@ -45,7 +44,7 @@ class Question(BasePost):
 
 class Answer(BasePost):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers', verbose_name='Вопрос')
-
+    is_correct = models.BooleanField(default=False, verbose_name='Правильный ответ')
     objects = AnswerManager()
 
     def __str__(self):

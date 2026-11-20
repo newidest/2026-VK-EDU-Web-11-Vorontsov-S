@@ -8,25 +8,30 @@
         <span id="page-title">Log In</span>
     </div>
 
-    <div class="form-error">Sorry, wrong password or login!</div>
-
-    <form action="{% url 'login' %}" method="POST" class="ask-form">
+    {% if form.non_field_errors %}
+        <div class="form-error">
+            {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <form action="{% url 'login' %}" method="POST" class="ask-form" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="form-group">
-            <label for="login">Login</label>
-            <div>
-                <input type="text" id="login" name="username" value="dr_pepper" minlength="4" maxlength="32" required class="settings-form">
-                <small class="field-hint">4–32 characters</small>
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <div>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="field-hint">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% if field.errors %}
+                        <small class="field-error">{{ field.errors.0 }}</small>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <div>
-                <input type="password" id="password" name="password" minlength="8" maxlength="64" required class="settings-form">
-                <small class="field-error">Password is too short (min 8 chars)</small>
-            </div>
-        </div>
-        <button type="submit" class="submit-btn">Log in!</button>
+        {% endfor %}
+        <button type="submit" class="submit-btn">Log in</button>
     </form>
 </div>
 {% endblock %}
