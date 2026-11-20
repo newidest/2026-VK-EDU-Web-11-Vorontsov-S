@@ -8,11 +8,27 @@
 
   <article class="question">
     <div class="question-left">
-      <img class="question-img" alt="avatar" src="{% static 'core/img/avatar.png' %}" />
-      <div class="counter-box">
-        <button type="button" class="vote-btn {% if question.vote_state == 'like' %}active-btn{% endif %}">▲</button>
-      <span class="counter">{{ question.rating }}</span>
-      <button type="button" class="vote-btn {% if question.vote_state == 'dislike' %}active-btn{% endif %}">▼</button>
+      {% if question.user.avatar %}
+        <img class="question-img" alt="avatar" src="{{ question.user.avatar.url }}" />
+      {% else %}
+        <img class="question-img" alt="avatar" src="{% static 'core/img/avatar.png' %}" />
+      {% endif %}
+      <div class="counter-box" data-vote-box="question-{{ question.id }}">
+        <button
+          type="button"
+          class="vote-btn {% if question.vote_state == 'like' %}active-btn{% endif %}"
+          data-vote-url="{% url 'vote_question' question.id 'like' %}"
+          data-vote-box-id="question-{{ question.id }}"
+          data-vote-type="like"
+        >▲</button>
+        <span class="counter" data-rating-counter="question-{{ question.id }}">{{ question.rating }}</span>
+        <button
+          type="button"
+          class="vote-btn {% if question.vote_state == 'dislike' %}active-btn{% endif %}"
+          data-vote-url="{% url 'vote_question' question.id 'dislike' %}"
+          data-vote-box-id="question-{{ question.id }}"
+          data-vote-type="dislike"
+        >▼</button>
       </div>
     </div>
     <div class="question-right">
@@ -24,7 +40,9 @@
         <div class="tags-block">
           <span>Tags:</span>
           {% for tag in question.tags.all %}
-            <a href="{% url 'tag' tag.name %}" class="tag">{{ tag }}</a>
+            {% if tag.name %}
+              <a href="{% url 'tag' tag.name %}" class="tag">{{ tag }}</a>
+            {% endif %}
           {% endfor %}
         </div>
       </div>
@@ -42,19 +60,28 @@
       <h1>Пока нет ни одного ответа</h1>
   {% endfor %}
 
-  {% include 'includes/pagination.html' %}
+  {% if request.user.is_authenticated %}
+    <form action="{% url 'question' question.id %}" method="POST" class="answer-form" novalidate>
+      {% csrf_token %}
+      <div class="form-group-full">
+        {{ form.content }}
+        {% if form.content.errors %}
+          <small class="field-error">{{ form.content.errors.0 }}</small>
+        {% endif %}
+      </div>
+      <button type="submit" class="submit-btn">Answer</button>
+    </form>
+  {% else %}
+    <h1>
+      <a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to post an answer.
+    </h1>
+  {% endif %}
 
-  <form action="{% url 'question' question.id %}" method="POST" class="answer-form">
-    {% csrf_token %}
-    <div class="form-group-full">
-      <textarea
-        id="answer-text"
-        name="answer"
-        placeholder="Enter your answer here.."
-        required
-      ></textarea>
-    </div>
-    <button type="submit" class="submit-btn">Answer</button>
-  </form>
+
+  {% include 'includes/pagination.html' %}
 </section>
+
+<script src="{% static 'questions/js/correct_answer.js' %}"></script>
+<script src="{% static 'questions/js/votes.js' %}"></script>
+
 {% endblock %}
