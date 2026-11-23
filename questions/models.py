@@ -1,11 +1,12 @@
 from django.db import models
 from django.urls import reverse
 from core.models import Profile
-from .managers import QuestionManager, AnswerManager
+from .managers import QuestionManager, AnswerManager, TagManager
 
 
 class Tag(models.Model):
     name = models.CharField(max_length=32, unique=True, verbose_name='Название')
+    objects=TagManager 
 
     def __str__(self):
         return self.name
@@ -30,6 +31,7 @@ class Question(BasePost):
     title = models.CharField(max_length=128, verbose_name='Заголовок')
     tags = models.ManyToManyField(Tag, blank=True, related_name='questions', verbose_name='Теги')
     objects = QuestionManager()
+    all_objects=models.Manager()
 
     def __str__(self):
         return self.title
@@ -46,6 +48,7 @@ class Answer(BasePost):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers', verbose_name='Вопрос')
     is_correct = models.BooleanField(default=False, verbose_name='Правильный ответ')
     objects = AnswerManager()
+    all_objects = models.Manager()
 
     def __str__(self):
         return f'Ответ #{self.pk}'

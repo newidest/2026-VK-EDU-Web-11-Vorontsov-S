@@ -25,6 +25,9 @@
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 <div>
                     {{ field }}
+                    {% if field.name == 'avatar' and user.profile.avatar %}
+                        <img alt="Avatar" class="question-img" src="{{ request.user.profile.avatar.url }}">
+                    {% endif %}
                     {% if field.help_text %}
                         <small class="field-hint">{{ field.help_text }}</small>
                     {% endif %}

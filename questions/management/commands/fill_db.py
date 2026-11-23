@@ -1,3 +1,4 @@
+from collections import defaultdict
 import random
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
@@ -23,10 +24,11 @@ class Command(BaseCommand):
         titles_pool = [fake.sentence(nb_words=random.randint(4, 8))[:128] for _ in range(1000)]
         texts_pool = [fake.text(max_nb_chars=250) for _ in range(1000)]
 
-        users = [
-            User(username=f'{random.choice(names_pool)}_{u_offset + i}', password='password123')
-            for i in range(ratio)
-        ]
+        users=[]
+        for i in range(ratio):
+            u=User(username=f'{random.choice(names_pool)}_{u_offset + i}')
+            u.set_password(random.choice(words_pool))
+            users.append(u)
         User.objects.bulk_create(users, batch_size=5000)
 
         profiles = [
@@ -46,7 +48,7 @@ class Command(BaseCommand):
                 user=random.choice(profiles),
                 title=random.choice(titles_pool),
                 content=random.choice(texts_pool),
-                rating=random.randint(0, 100),
+                rating=0
             )
             for _ in range(ratio * 10)
         ]
@@ -64,28 +66,44 @@ class Command(BaseCommand):
                 question=random.choice(questions),
                 user=random.choice(profiles),
                 content=random.choice(texts_pool),
-                rating=random.randint(0, 50),
+                rating=0
             )
             for _ in range(ratio * 100)
         ]
         Answer.objects.bulk_create(answers, batch_size=5000)
 
-        q_likes = [
-            QuestionLike(
-                user=random.choice(profiles),
-                question=random.choice(questions),
-                like=random.choice([-1, 1]),
-            )
-            for _ in range(ratio * 200)
-        ]
-        QuestionLike.objects.bulk_create(q_likes, batch_size=5000, ignore_conflicts=True)
+        q_pairs = set()
+        q_likes = []
+        q_ratings = defaultdict(int)
+        while len(q_likes) < ratio*100:
+            p = random.choice(profiles)
+            q = random.choice(questions)
+            pair = (p.id, q.id)
+            if pair not in q_pairs:
+                q_pairs.add(pair)
+                rating = random.choice([-1, 1])
+                q_likes.append(QuestionLike(user_id=p.id, question_id=q.id, like=rating))
+                q_ratings[q.id] += rating
+        QuestionLike.objects.bulk_create(q_likes, batch_size=5000)
 
-        a_likes = [
-            AnswerLike(
-                user=random.choice(profiles),
-                answer=random.choice(answers),
-                like=random.choice([-1, 1]),
-            )
-            for _ in range(ratio * 200)
-        ]
-        AnswerLike.objects.bulk_create(a_likes, batch_size=5000, ignore_conflicts=True)
+        a_pairs = set()
+        a_likes = []
+        a_ratings = defaultdict(int)
+        while len(a_likes) < ratio*100:
+            p = random.choice(profiles)
+            a = random.choice(answers)
+            pair = (p.id, a.id)
+            if pair not in a_pairs:
+                a_pairs.add(pair)
+                rating = random.choice([-1, 1])
+                a_likes.append(AnswerLike(user_id=p.id, answer_id=a.id, like=rating))
+                a_ratings[a.id] += rating
+        AnswerLike.objects.bulk_create(a_likes, batch_size=5000)
+
+        for q in questions:
+            q.rating = q_ratings[q.id]
+        Question.objects.bulk_update(questions, ['rating'], batch_size=5000)
+
+        for a in answers:
+            a.rating = a_ratings[a.id]
+        Answer.objects.bulk_update(answers, ['rating'], batch_size=5000)
