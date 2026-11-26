@@ -1,21 +1,53 @@
 {% load static %}
 <article class="question">
   <div class="question-left">
-    <img
-      class="question-img"
-      alt="avatar"
-      src="{% static 'core/img/avatar.png' %}"
-    />
-    <div class="counter-box">
-      <button type="button" class="vote-btn {% if answer.vote_state == 'like' %}active-btn{% endif %}">▲</button>
-      <span class="counter">{{ answer.rating }}</span>
-      <button type="button" class="vote-btn {% if answer.vote_state == 'dislike' %}active-btn{% endif %}">▼</button>
+    {% if question.user.avatar %}
+        <img class="question-img" alt="avatar" src="{{ answer.user.avatar.url }}" />
+      {% else %}
+        <img class="question-img" alt="avatar" src="{% static 'core/img/avatar.png' %}" />
+      {% endif %}
+    <div class="counter-box" data-vote-box="answer-{{ answer.id }}">
+      <button
+        type="button"
+        class="vote-btn {% if answer.vote_state == 'like' %}active-btn{% endif %}"
+        data-vote-url="{% url 'vote_answer' answer.id 'like' %}"
+        data-vote-box-id="answer-{{ answer.id }}"
+        data-vote-type="like"
+      >▲</button>
+      <span class="counter" data-rating-counter="answer-{{ answer.id }}">{{ answer.rating }}</span>
+      <button
+        type="button"
+        class="vote-btn {% if answer.vote_state == 'dislike' %}active-btn{% endif %}"
+        data-vote-url="{% url 'vote_answer' answer.id 'dislike' %}"
+        data-vote-box-id="answer-{{ answer.id }}"
+        data-vote-type="dislike"
+      >▼</button>
     </div>
   </div>
   <div class="question-right">
     <p class="question-text full-text">{{ answer.content }}</p>
     <div class="question-meta">
       <div class="time">Date: {{answer.created|date:"d.m.y H:i"}}</div>
+
+      <span
+        class="meta-correct-badge"
+        data-correct-badge="{{ answer.id }}"
+        {% if not answer.is_correct %}hidden{% endif %}
+      >
+        [Correct]
+      </span>
+
+      {% if is_question_author %}
+        <button
+          type="button"
+          class="meta-correct-btn {% if answer.is_correct %}active-btn{% endif %}"
+          data-question-id="{{ question.id }}"
+          data-correct-answer-id="{{ answer.id }}"
+          data-url="{% url 'mark_correct_answer' question.id answer.id %}"
+        >
+          Mark correct
+        </button>
+      {% endif %}
     </div>
   </div>
 </article>

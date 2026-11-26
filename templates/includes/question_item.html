@@ -1,11 +1,27 @@
 {% load static %}
 <article class="question">
   <div class="question-left">
-    <img class="question-img" alt="avatar" src="{% static 'core/img/avatar.png' %}" />
-    <div class="counter-box">
-      <button type="button" class="vote-btn {% if question.vote_state == 'like' %}active-btn{% endif %}">▲</button>
-      <span class="counter">{{ question.rating }}</span>
-      <button type="button" class="vote-btn {% if question.vote_state == 'dislike' %}active-btn{% endif %}">▼</button>
+    {% if question.user.avatar %}
+      <img class="question-img" alt="avatar" src="{{ question.user.avatar.url }}" />
+    {% else %}
+      <img class="question-img" alt="avatar" src="{% static 'core/img/avatar.png' %}" />
+    {% endif %}
+    <div class="counter-box" data-vote-box="question-{{ question.id }}">
+      <button
+        type="button"
+        class="vote-btn {% if question.vote_state == 'like' %}active-btn{% endif %}"
+        data-vote-url="{% url 'vote_question' question.id 'like' %}"
+        data-vote-box-id="question-{{ question.id }}"
+        data-vote-type="like"
+      >▲</button>
+      <span class="counter" data-rating-counter="question-{{ question.id }}">{{ question.rating }}</span>
+      <button
+        type="button"
+        class="vote-btn {% if question.vote_state == 'dislike' %}active-btn{% endif %}"
+        data-vote-url="{% url 'vote_question' question.id 'dislike' %}"
+        data-vote-box-id="question-{{ question.id }}"
+        data-vote-type="dislike"
+      >▼</button>
     </div>
   </div>
   <div class="question-right">
@@ -17,11 +33,13 @@
       <div class="tags-block">
         <span>Tags:</span>
         {% for tag in question.tags.all %}
-          <a href="{% url 'tag' tag.name %}" class="tag">{{ tag }}</a>
+          {% if tag.name %}
+            <a href="{% url 'tag' tag.name %}" class="tag">{{ tag }}</a>
+          {% endif %}
         {% endfor %}
       </div>
-      <div class="time">Date: {{question.created|date:"d.m.y H:i"}}</div>
-      <a href="{% url 'question' question.id %}">Answers: {{question.answers_count}}</a>
+      <div class="time">Date: {{ question.created|date:"d.m.y H:i" }}</div>
+      <a href="{% url 'question' question.id %}">Answers: {{ question.answer_count }}</a>
     </div>
   </div>
 </article>

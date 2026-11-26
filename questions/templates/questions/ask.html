@@ -8,41 +8,38 @@
     <h1 id="page-title">New Question</h1>
   </div>
 
-  <form action="{% url 'ask' %}" method="POST" class="ask-form">
-    {% csrf_token %}
-    <div class="form-group">
-      <label for="question-title">Title</label>
-      <input
-        type="text"
-        id="question-title"
-        name="title"
-        placeholder="How to build a moon park?"
-        required
-      />
-    </div>
+  {% if request.user.is_authenticated %}
+    {% if form.non_field_errors %}
+      <div class="form-error">
+        {% for error in form.non_field_errors %}
+          <div>{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
 
-    <div class="form-group">
-      <label for="question-text">Text</label>
-      <textarea
-        id="question-text"
-        name="text"
-        placeholder="Really, how? Have no idea about it"
-        required
-      ></textarea>
-    </div>
-
-    <div class="form-group">
-      <label for="question-tags">Tags</label>
-      <input
-        type="text"
-        id="question-tags"
-        name="tags"
-        placeholder="moon, park, puzzle"
-        required
-      />
-    </div>
-
-    <button type="submit" class="submit-btn">ASK!</button>
-  </form>
+    <form action="{% url 'ask' %}" method="POST" class="ask-form">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          <div>
+            {{ field }}
+            {% if field.help_text %}
+              <small class="field-hint">{{ field.help_text }}</small>
+            {% endif %}
+            {% if field.errors %}
+              <small class="field-error">{{ field.errors.0 }}</small>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+      <button type="submit" class="submit-btn">Save</button>
+    </form>
+  {% else %}
+    <h1>
+      <a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to post a question.
+    </h1>
+  {% endif %}
 </section>
+
 {% endblock %}

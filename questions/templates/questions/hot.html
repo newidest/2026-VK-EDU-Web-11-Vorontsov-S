@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}AskPupkin - Hot Questions{% endblock %}
 
 {% block content %}
@@ -11,8 +11,12 @@
 
   {% for question in page_obj %}
     {% include 'includes/question_item.html' %}
+    {% empty %}
+      <h1>Пока нет ни одного вопроса</h1>
   {% endfor %}
 
   {% include 'includes/pagination.html' %}
 </section>
+
+<script src="{% static 'questions/js/votes.js' %}"></script>
 {% endblock %}

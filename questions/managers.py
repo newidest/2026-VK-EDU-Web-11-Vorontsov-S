@@ -5,6 +5,10 @@ from django.db import models
 from django.db.models import Count
 
 
+class TagManager(models.Manager):
+    def popular(self,limit=10):
+        return self.annotate(num_questions=Count('questions')).order_by('-num_questions')[:10]
+
 class QuestionManager(models.Manager):
     def get_queryset(self):
         return (
@@ -13,7 +17,6 @@ class QuestionManager(models.Manager):
             .select_related('user', 'user__user')
             .prefetch_related('tags')
         )
-
     def new(self):
         return self.get_queryset().order_by('-created')
 
@@ -21,7 +24,7 @@ class QuestionManager(models.Manager):
         return self.get_queryset().order_by('-rating', '-created')
 
     def by_tag(self, tag_name):
-        return self.get_queryset().filter(tags__name=tag_name).order_by('-created')
+        return self.get_queryset().filter(tags__name=tag_name).order_by('-rating')
 
     def with_details(self):
         return self.get_queryset().annotate(answer_count=Count('answers'))

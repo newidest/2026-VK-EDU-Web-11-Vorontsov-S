@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}AskPumpkin{% endblock %}
 
 {% block content %}
@@ -17,4 +17,6 @@
 
   {% include 'includes/pagination.html' %}
 </section>
+
+<script src="{% static 'questions/js/votes.js' %}"></script>
 {% endblock %}
