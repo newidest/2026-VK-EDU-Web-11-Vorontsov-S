@@ -6,7 +6,8 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 from questions.views import render_page
 from django.http import HttpResponseRedirect
-from django.core.exceptions import ValidationError
+from django.utils.http import url_has_allowed_host_and_scheme
+from .models import Profile
 
 
 def login_view(request):
@@ -53,14 +54,19 @@ def register_view(request):
 @require_POST
 def logout_view(request):
     logout(request)
+    next_url = request.POST.get('next')
+    if next_url and url_has_allowed_host_and_scheme(
+        url=next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return HttpResponseRedirect(next_url)
     return HttpResponseRedirect(reverse('index'))
 
 
 @login_required
 def profile_view(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect(reverse('login'))
-    profile=request.user.profile
+    profile,_=Profile.objects.get_or_create(user=request.user,defaults={'nickname':request.user.username})
     saved=False
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)

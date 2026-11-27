@@ -27,25 +27,47 @@
                 btn.dataset.voteUrl,
                 {
                     method: 'POST',
-                    headers: {'X-CSRFToken': csrftoken},
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'Accept': 'application/json',
+                    },
                     mode: 'same-origin'
                 }
             );
 
-            fetch(request).then(function(response) {
-                if (!response.ok) return;
-                response.json().then((data) => {
-                    if (counter) {
-                        counter.innerText = data.rating;
+            fetch(request)
+                .then((response) => {
+                    if (response.status === 401) {
+                        response.json().catch(() => ({})).then((data) => {
+                            const loginUrl = data.login_url || '/login/';
+                            const next = encodeURIComponent(window.location.pathname + window.location.search);
+                            window.location.href = `${loginUrl}?next=${next}`;
+                        });
+                        return;
                     }
-                    if (box) {
-                        const likeBtn = box.querySelector('button[data-vote-type="like"]');
-                        const dislikeBtn = box.querySelector('button[data-vote-type="dislike"]');
-                        likeBtn.classList.toggle('active-btn', data.vote_state === 'like');
-                        dislikeBtn.classList.toggle('active-btn', data.vote_state === 'dislike');
+
+                    if (!response.ok) {
+                        response.json().catch(() => ({})).then((data) => {
+                            alert(data.error || `Ошибка запроса (${response.status})`);
+                        });
+                        return;
                     }
+
+                    response.json().then((data) => {
+                        if (counter) {
+                            counter.innerText = data.rating;
+                        }
+                        if (box) {
+                            const likeBtn = box.querySelector('button[data-vote-type="like"]');
+                            const dislikeBtn = box.querySelector('button[data-vote-type="dislike"]');
+                            likeBtn.classList.toggle('active-btn', data.vote_state === 'like');
+                            dislikeBtn.classList.toggle('active-btn', data.vote_state === 'dislike');
+                        }
+                    });
+                })
+                .catch(() => {
+                    alert('Ошибка сети. Проверьте подключение.');
                 });
-            });
         });
     }
 })();

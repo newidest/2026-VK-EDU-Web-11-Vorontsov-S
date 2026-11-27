@@ -1,12 +1,13 @@
 {% load static %}
-<article class="question">
+<article class="question" id="answer-{{ answer.id }}">
   <div class="question-left">
-    {% if question.user.avatar %}
+    {% if answer.user.avatar %}
         <img class="question-img" alt="avatar" src="{{ answer.user.avatar.url }}" />
       {% else %}
         <img class="question-img" alt="avatar" src="{% static 'core/img/avatar.png' %}" />
       {% endif %}
     <div class="counter-box" data-vote-box="answer-{{ answer.id }}">
+      {% if user.is_authenticated %}
       <button
         type="button"
         class="vote-btn {% if answer.vote_state == 'like' %}active-btn{% endif %}"
@@ -14,7 +15,9 @@
         data-vote-box-id="answer-{{ answer.id }}"
         data-vote-type="like"
       >▲</button>
+      {% endif %}
       <span class="counter" data-rating-counter="answer-{{ answer.id }}">{{ answer.rating }}</span>
+      {% if user.is_authenticated %}
       <button
         type="button"
         class="vote-btn {% if answer.vote_state == 'dislike' %}active-btn{% endif %}"
@@ -22,6 +25,9 @@
         data-vote-box-id="answer-{{ answer.id }}"
         data-vote-type="dislike"
       >▼</button>
+      {% else %}
+        <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }} " class="field-hint">Войдите чтобы голосовать</a>
+      {% endif %}
     </div>
   </div>
   <div class="question-right">

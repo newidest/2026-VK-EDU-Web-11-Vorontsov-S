@@ -7,21 +7,27 @@
       <img class="question-img" alt="avatar" src="{% static 'core/img/avatar.png' %}" />
     {% endif %}
     <div class="counter-box" data-vote-box="question-{{ question.id }}">
-      <button
-        type="button"
-        class="vote-btn {% if question.vote_state == 'like' %}active-btn{% endif %}"
-        data-vote-url="{% url 'vote_question' question.id 'like' %}"
-        data-vote-box-id="question-{{ question.id }}"
-        data-vote-type="like"
-      >▲</button>
+      {% if user.is_authenticated %}
+        <button
+          type="button"
+          class="vote-btn {% if question.vote_state == 'like' %}active-btn{% endif %}"
+          data-vote-url="{% url 'vote_question' question.id 'like' %}"
+          data-vote-box-id="question-{{ question.id }}"
+          data-vote-type="like"
+        >▲</button>
+      {% endif %}
       <span class="counter" data-rating-counter="question-{{ question.id }}">{{ question.rating }}</span>
-      <button
-        type="button"
-        class="vote-btn {% if question.vote_state == 'dislike' %}active-btn{% endif %}"
-        data-vote-url="{% url 'vote_question' question.id 'dislike' %}"
-        data-vote-box-id="question-{{ question.id }}"
-        data-vote-type="dislike"
-      >▼</button>
+      {% if user.is_authenticated %}
+        <button
+          type="button"
+          class="vote-btn {% if question.vote_state == 'dislike' %}active-btn{% endif %}"
+          data-vote-url="{% url 'vote_question' question.id 'dislike' %}"
+          data-vote-box-id="question-{{ question.id }}"
+          data-vote-type="dislike"
+        >▼</button>
+      {% else %}
+        <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }} " class="field-hint">Войдите чтобы голосовать</a>
+      {% endif %}
     </div>
   </div>
   <div class="question-right">

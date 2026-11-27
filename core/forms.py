@@ -129,7 +129,8 @@ class RegisterForm(forms.ModelForm):
             raise forms.ValidationError('Passwords do not match')
 
         if password:
-            validate_password(password)
+            user=User(username=cleaned_data.get('username')or '',email=cleaned_data.get('email')or '')
+            validate_password(password,user)
 
         return cleaned_data
 

@@ -1,10 +1,6 @@
 from django.db import models
 from django.db.models import Count
 
-from django.db import models
-from django.db.models import Count
-
-
 class TagManager(models.Manager):
     def popular(self,limit=10):
         return self.annotate(num_questions=Count('questions')).order_by('-num_questions')[:10]

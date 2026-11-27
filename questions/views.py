@@ -1,13 +1,12 @@
+from django.db import IntegrityError
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.views.decorators.http import require_POST
-from questions.forms import AnswerForm,AskForm
-from .models import Question, Answer, Tag,QuestionLike, AnswerLike
+from questions.forms import AnswerForm,AskForm, MarkCorrectForm, VoteForm
+from .models import Question, Answer, Tag
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.db.models import Sum
 
 def get_base_context():
     return {'popular_tags': Tag.objects.popular()}
@@ -24,21 +23,24 @@ def paginate(objects_list, request, per_page=10):
         return paginator.page(1)
 
 
-def render_page(request, template_name, queryset=None, per_page=10, extra_context=None):
+def render_page(request, template_name, queryset=None, per_page=20, extra_context=None, with_answer_counts=False):
     context = get_base_context()
     if queryset is not None:
         context['page_obj'] = paginate(queryset, request, per_page=per_page)
+        context['page_obj'].object_list = queryset.model.attach_vote_state(context['page_obj'].object_list, request.user)
+        if with_answer_counts:
+            context['page_obj'].object_list = Question.attach_answer_counts(context['page_obj'].object_list)
     if extra_context:
         context.update(extra_context)
     return render(request, template_name, context)
 
 
 def index(request):
-    return render_page(request, 'questions/index.html', Question.objects.new(), per_page=20)
+    return render_page(request, 'questions/index.html', Question.objects.new(), per_page=20,with_answer_counts=True)
 
 
 def hot(request):
-    return render_page(request, 'questions/hot.html', Question.objects.hot(), per_page=20)
+    return render_page(request, 'questions/hot.html', Question.objects.hot(), per_page=20,with_answer_counts=True)
 
 
 def tag(request, tag_name):
@@ -49,6 +51,7 @@ def tag(request, tag_name):
         Question.objects.by_tag(tag_obj.name),
         per_page=20,
         extra_context={'tag_name': tag_obj.name},
+        with_answer_counts=True
     )
 
 
@@ -61,8 +64,10 @@ def question(request, question_id):
             return HttpResponseRedirect(f"{reverse('login')}?next={request.path}")
         form = AnswerForm(request.POST)
         if form.is_valid():
-            form.save(author=request.user.profile, question=item)
-            return HttpResponseRedirect(reverse('question', args=[item.id]))
+            answer=form.save(author=request.user.profile, question=item)
+            ids = list(Answer.objects.for_question(item).values_list('id', flat=True))
+            page = ids.index(answer.id) // 30 +1
+            return HttpResponseRedirect(f"{reverse('question', args=[item.id])}?page={page}#answer-{answer.id}")
     else:
         form = AnswerForm()
 
@@ -71,7 +76,7 @@ def question(request, question_id):
         and hasattr(request.user, 'profile')
         and item.user_id == request.user.profile.id
     )
-
+    Question.attach_vote_state([item], request.user)
     return render_page(
         request,
         'questions/question.html',
@@ -84,7 +89,7 @@ def question(request, question_id):
         },
     )
 
-@login_required(login_url='/login')
+@login_required
 def ask(request):
     if request.method=='POST':
         form=AskForm(request.POST)
@@ -96,80 +101,66 @@ def ask(request):
     return render_page(request, 'questions/ask.html',extra_context={'form':form})
 
 
-@login_required(login_url='/login')
-@require_POST
-def mark_correct_answer(request,question_id,answer_id):
-    question = get_object_or_404(Question, id=question_id)
+def csrf_failure(request, reason=''):
+    if request.headers.get('Accept') == 'application/json':
+        return JsonResponse({'error': 'Ошибка CSRF'}, status=403)
+    return HttpResponseForbidden(reason or 'Ошибка CSRF')
 
-    if question.user != request.user.profile:
-        return JsonResponse({'error': 'Forbidden'}, status=403)
+def mark_correct_answer(request, question_id, answer_id):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Нужен POST-запрос'}, status=405)
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Нужна авторизация', 'login_url': reverse('login')}, status=401)
 
-    answer = get_object_or_404(Answer, id=answer_id, question=question)
-    answer.is_correct = not answer.is_correct
-    answer.save(update_fields=['is_correct'])
+    form = MarkCorrectForm({'question_id': question_id, 'answer_id': answer_id})
+    if not form.is_valid():
+        return JsonResponse({'error': 'Неверные параметры'}, status=400)
 
-    return JsonResponse({'is_correct': answer.is_correct})
+    q = Question.objects.filter(id=form.cleaned_data['question_id']).first()
+    if not q:
+        return JsonResponse({'error': 'Вопрос не найден'}, status=404)
+    if q.user_id != request.user.profile.id:
+        return JsonResponse({'error': 'Нет прав'}, status=403)
+
+    answer = Answer.objects.filter(id=form.cleaned_data['answer_id'], question=q).first()
+    if not answer:
+        return JsonResponse({'error': 'Ответ не найден'}, status=404)
+
+    try:
+        is_correct = answer.toggle_correct()
+    except IntegrityError:
+        return JsonResponse({'error': 'Конфликт при сохранении'}, status=409)
+
+    return JsonResponse({'is_correct': is_correct, 'answer_id': answer.id})
+
+def _vote(request, model, object_id, vote_type):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Нужен POST-запрос'}, status=405)
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Нужна авторизация', 'login_url': reverse('login')}, status=401)
+
+    form = VoteForm({'vote_type': vote_type})
+    if not form.is_valid():
+        return JsonResponse({'error': 'Неверный тип голоса'}, status=400)
+
+    item = model.objects.filter(id=object_id).first()
+    if not item:
+        return JsonResponse({'error': 'Объект не найден'}, status=404)
+
+    try:
+        rating, vote_state = item.toggle_vote(request.user.profile, form.cleaned_data['vote_type'])
+    except IntegrityError:
+        return JsonResponse({'error': 'Конфликт при сохранении'}, status=409)
+
+    return JsonResponse({'rating': rating, 'vote_state': vote_state})
 
 
-def _toggle_vote(like_model, target_field, target_obj, profile, vote_type):
-    if vote_type not in ('like', 'dislike'):
-        return None, None
 
-    value = 1 if vote_type == 'like' else -1
-    vote, created = like_model.objects.get_or_create(
-        user=profile,
-        **{target_field: target_obj},
-        defaults={'like': value},
-    )
-
-    if not created:
-        if vote.like == value:
-            vote.delete()
-            vote_state = None
-        else:
-            vote.like = value
-            vote.save(update_fields=['like'])
-            vote_state = vote_type
-    else:
-        vote_state = vote_type
-
-    rating = (
-        like_model.objects.filter(**{target_field: target_obj})
-        .aggregate(total=Sum('like'))['total']
-        or 0
-    )
-    target_obj.rating = rating
-    target_obj.save(update_fields=['rating'])
-
-    return rating, vote_state
-
-
-@require_POST
 def vote_question(request, question_id, vote_type):
-    if not request.user.is_authenticated:
-        return JsonResponse({'error': 'Unauthorized'}, status=401)
-
-    item = get_object_or_404(Question, id=question_id)
-    rating, vote_state = _toggle_vote(
-        QuestionLike, 'question', item, request.user.profile, vote_type
-    )
-    if rating is None:
-        return JsonResponse({'error': 'Invalid vote type'}, status=400)
-
-    return JsonResponse({'rating': rating, 'vote_state': vote_state})
+    return _vote(request, Question, question_id, vote_type)
 
 
-@require_POST
+
 def vote_answer(request, answer_id, vote_type):
-    if not request.user.is_authenticated:
-        return JsonResponse({'error': 'Unauthorized'}, status=401)
-
-    item = get_object_or_404(Answer, id=answer_id)
-    rating, vote_state = _toggle_vote(
-        AnswerLike, 'answer', item, request.user.profile, vote_type
-    )
-    if rating is None:
-        return JsonResponse({'error': 'Invalid vote type'}, status=400)
-
-    return JsonResponse({'rating': rating, 'vote_state': vote_state})
+    return _vote(request, Answer, answer_id, vote_type)
 

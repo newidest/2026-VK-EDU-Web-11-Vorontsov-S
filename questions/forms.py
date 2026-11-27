@@ -1,6 +1,7 @@
 from django import forms
 from questions.models import Answer,Question, Tag
 from django.core.exceptions import ValidationError
+from django.core.validators import validate_unicode_slug
 
 
 class AnswerForm(forms.ModelForm):
@@ -86,12 +87,19 @@ class AskForm(forms.ModelForm):
         seen=set()
         for tag in raw_tags.split(','):
             tag = tag.strip().lower()
+            if not tag:
+                continue
             if len(tag) > 32:
                 raise ValidationError(f'Тег "{tag}" длиннее 32 символов.')
+            try:
+                validate_unicode_slug(tag)
+            except ValidationError:
+                raise ValidationError(f'Недопустимый тег "{tag}". Разрешены только буквы, цифры, дефис и подчёркивание.')
             if tag not in seen:
                 seen.add(tag)
                 tag_names.append(tag)
-
+        if len(seen)>3:
+            raise ValidationError('Максимум 3 тега')
         return tag_names
 
     def save(self, author, commit=True):
@@ -107,3 +115,11 @@ class AskForm(forms.ModelForm):
             question.tags.set(tag_objects)
 
         return question
+
+class VoteForm(forms.Form):
+    vote_choices = (('like', 'Like'),('dislike', 'Dislike'),)
+    vote_type = forms.ChoiceField(choices=vote_choices)
+
+class MarkCorrectForm(forms.Form):
+    question_id = forms.IntegerField(min_value=1)
+    answer_id = forms.IntegerField(min_value=1)
